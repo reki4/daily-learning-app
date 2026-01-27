@@ -1,0 +1,8 @@
+name = "daily-learning-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "daily-learning-db"
+database_id = "placeholder-id"

@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Notion Theme */
+.theme-notion {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f6f3;
+  --text-primary: #37352f;
+  --accent: #2383e2;
+}
+
+/* Tonal Color Theme */
+.theme-tonal {
+  --bg-primary: #fffbeb;
+  --bg-secondary: #fef3c7;
+  --text-primary: #78350f;
+  --accent: #f97316;
+}
+
+/* Industrial Modern Theme */
+.theme-industrial {
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #e5e7eb;
+  --text-primary: #1f2937;
+  --accent: #3b82f6;
+}
