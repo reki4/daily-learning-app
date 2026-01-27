@@ -9,6 +9,46 @@
 - **データベース**: Cloudflare D1
 - **認証**: Cloudflare Access
 
+## GitHub Actions でのデプロイ（推奨）
+
+### 1. 事前準備（初回のみ）
+
+ローカルでD1データベースを作成:
+
+```bash
+cd backend
+npx wrangler login
+npx wrangler d1 create daily-learning-db
+```
+
+出力された `database_id` を `backend/wrangler.toml` に設定してコミット。
+
+### 2. GitHub Secrets の設定
+
+リポジトリの Settings → Secrets and variables → Actions で以下を設定:
+
+| Secret名 | 値 |
+|----------|-----|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare APIトークン |
+| `CLOUDFLARE_ACCOUNT_ID` | CloudflareアカウントID |
+| `WORKER_URL` | Workers URL (例: `https://daily-learning-api.xxx.workers.dev`) |
+
+### 3. D1マイグレーション実行
+
+1. GitHub → Actions → "Setup D1 Database"
+2. "Run workflow" → action: `migrate` → 実行
+
+### 4. デプロイ
+
+`main` ブランチにプッシュすると自動デプロイ、または Actions から手動実行。
+
+### 5. サンプルデータ投入（オプション）
+
+1. GitHub → Actions → "Setup D1 Database"
+2. "Run workflow" → action: `seed` → 実行
+
+---
+
 ## ローカル開発
 
 ### バックエンド

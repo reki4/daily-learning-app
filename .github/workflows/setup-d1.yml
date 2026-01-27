@@ -1,0 +1,44 @@
+name: Setup D1 Database
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'migrate'
+        type: choice
+        options:
+          - migrate
+          - seed
+
+jobs:
+  setup-d1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run D1 Migration
+        if: ${{ github.event.inputs.action == 'migrate' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: ./backend
+          command: d1 execute daily-learning-db --remote --file=./schema.sql
+
+      - name: Seed Sample Data
+        if: ${{ github.event.inputs.action == 'seed' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: ./backend
+          command: d1 execute daily-learning-db --remote --file=./seed.sql
