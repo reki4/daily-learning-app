@@ -34,15 +34,30 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
     if (!text) return null
 
     // Convert markdown-like syntax to HTML
+    // Important: Process code blocks BEFORE inline code to prevent corruption
     const html = text
+      // Multi-line code blocks (```lang\n...\n```)
+      .replace(/```(\w*)\n([\s\S]*?)```/g, (_match, _lang, code) => {
+        const escapedCode = code
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .trimEnd()
+        return `<pre class="bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto my-3 text-sm"><code>${escapedCode}</code></pre>`
+      })
+      // Headers
       .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
       .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mt-4 mb-2">$1</h2>')
       .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>')
+      // Bold and italic
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/`(.+?)`/g, '<code class="bg-gray-100 px-1 rounded">$1</code>')
+      // Inline code (after code blocks)
+      .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-red-600">$1</code>')
+      // Lists
       .replace(/^- (.+)$/gm, '<li class="ml-4">$1</li>')
-      .replace(/\n/g, '<br />')
+      // Line breaks (but not inside <pre> tags)
+      .replace(/\n(?![^<]*<\/pre>)/g, '<br />')
 
     return (
       <div
