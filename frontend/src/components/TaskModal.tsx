@@ -75,7 +75,7 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-xl">
+      <div className="bg-white rounded-xl w-[75vw] max-w-5xl max-h-[85vh] overflow-hidden shadow-xl">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
@@ -101,7 +101,7 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
           </div>
 
           {/* Description */}
-          <div className="mb-6 overflow-y-auto max-h-60">
+          <div className="mb-6 overflow-y-auto max-h-[50vh]">
             {renderDescription(task.description)}
           </div>
 
