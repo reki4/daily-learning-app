@@ -45,17 +45,23 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
           .trimEnd()
         return `<pre class="bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto my-3 text-sm"><code>${escapedCode}</code></pre>`
       })
+      // Blockquotes (> text)
+      .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-gray-300 pl-4 my-2 text-gray-600 italic">$1</blockquote>')
       // Headers
       .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
       .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mt-4 mb-2">$1</h2>')
       .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>')
+      // Links [text](url)
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">$1</a>')
       // Bold and italic
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       // Inline code (after code blocks)
       .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-red-600">$1</code>')
-      // Lists
-      .replace(/^- (.+)$/gm, '<li class="ml-4">$1</li>')
+      // Numbered lists (1. item)
+      .replace(/^\d+\. (.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
+      // Unordered lists
+      .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
       // Line breaks (but not inside <pre> tags)
       .replace(/\n(?![^<]*<\/pre>)/g, '<br />')
 
