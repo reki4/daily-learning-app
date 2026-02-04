@@ -147,8 +147,8 @@ function App() {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 p-8">
-          <div className="max-w-3xl">
+        <main className="flex-1 p-8 pr-12">
+          <div>
             {loading ? (
               <div className="text-center py-12 text-gray-500">読み込み中...</div>
             ) : (
