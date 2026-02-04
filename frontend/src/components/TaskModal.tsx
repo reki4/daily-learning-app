@@ -34,15 +34,36 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
     if (!text) return null
 
     // Convert markdown-like syntax to HTML
+    // Important: Process code blocks BEFORE inline code to prevent corruption
     const html = text
+      // Multi-line code blocks (```lang\n...\n```)
+      .replace(/```(\w*)\n([\s\S]*?)```/g, (_match, _lang, code) => {
+        const escapedCode = code
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .trimEnd()
+        return `<pre class="bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto my-3 text-sm"><code>${escapedCode}</code></pre>`
+      })
+      // Blockquotes (> text)
+      .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-gray-300 pl-4 my-2 text-gray-600 italic">$1</blockquote>')
+      // Headers
       .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
       .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mt-4 mb-2">$1</h2>')
       .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>')
+      // Links [text](url)
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">$1</a>')
+      // Bold and italic
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/`(.+?)`/g, '<code class="bg-gray-100 px-1 rounded">$1</code>')
-      .replace(/^- (.+)$/gm, '<li class="ml-4">$1</li>')
-      .replace(/\n/g, '<br />')
+      // Inline code (after code blocks)
+      .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-red-600">$1</code>')
+      // Numbered lists (1. item)
+      .replace(/^\d+\. (.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
+      // Unordered lists
+      .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+      // Line breaks (but not inside <pre> tags)
+      .replace(/\n(?![^<]*<\/pre>)/g, '<br />')
 
     return (
       <div
@@ -54,7 +75,7 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-xl">
+      <div className="bg-white rounded-xl w-[75vw] max-w-5xl max-h-[85vh] overflow-hidden shadow-xl">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
@@ -80,7 +101,7 @@ export function TaskModal({ task, onClose, onComplete }: TaskModalProps) {
           </div>
 
           {/* Description */}
-          <div className="mb-6 overflow-y-auto max-h-60">
+          <div className="mb-6 overflow-y-auto max-h-[50vh]">
             {renderDescription(task.description)}
           </div>
 
